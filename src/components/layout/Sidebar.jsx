@@ -9,25 +9,35 @@ function Sidebar({ mobileOpen, onMobileClose }) {
   const { success } = useToast()
   const location = useLocation()
   const navigate = useNavigate()
-  
+
   const [activeRole, setActiveRole] = useState(null)
-  
+
   useEffect(() => {
     if (isOwner) setActiveRole('owner')
     else if (isSuperadmin) setActiveRole('superadmin')
     else if (isGuru) setActiveRole('guru')
     else if (isOrangtua) setActiveRole('orangtua')
   }, [isOwner, isSuperadmin, isGuru, isOrangtua])
-  
+
   const navItems = getNavigationItems(activeRole) || []
   const currentPath = location.pathname
-  
+
+  // Check if a nav item is active
+  // For root/dashboard items (index 0), use exact match to avoid
+  // highlighting when on sub-pages like /branches, /invoices etc.
+  const isNavActive = (item, index) => {
+    if (index === 0) {
+      return currentPath === item.path
+    }
+    return currentPath.startsWith(item.path)
+  }
+
   const handleLogout = () => {
     logout()
     success('Anda telah berhasil logout')
     navigate('/login')
   }
-  
+
   const handleNavClick = (path) => {
     navigate(path)
     if (onMobileClose) onMobileClose()
@@ -58,17 +68,19 @@ function Sidebar({ mobileOpen, onMobileClose }) {
         <nav className="sidebar-nav">
           <div className="sidebar-nav-section">
             <div className="sidebar-nav-title">Menu Utama</div>
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <button
                 key={item.path}
                 onClick={() => handleNavClick(item.path)}
-                className={`sidebar-nav-item ${currentPath.startsWith(item.path) ? 'active' : ''}`}
+                className={`sidebar-nav-item ${isNavActive(item, index) ? 'active' : ''}`}
               >
                 <span className="sidebar-nav-icon">{item.icon}</span>
-                <span className="sidebar-nav-label">{item.label}</span>
-                {item.description && (
-                  <span className="sidebar-nav-description">{item.description}</span>
-                )}
+                <div className="sidebar-nav-text">
+                  <span className="sidebar-nav-label">{item.label}</span>
+                  {item.description && (
+                    <span className="sidebar-nav-description">{item.description}</span>
+                  )}
+                </div>
               </button>
             ))}
           </div>
@@ -109,14 +121,19 @@ function Sidebar({ mobileOpen, onMobileClose }) {
             </div>
 
             <nav className="sidebar-nav mobile">
-              {navItems.map((item) => (
+              {navItems.map((item, index) => (
                 <button
                   key={item.path}
                   onClick={() => handleNavClick(item.path)}
-                  className={`sidebar-nav-item ${currentPath.startsWith(item.path) ? 'active' : ''}`}
+                  className={`sidebar-nav-item ${isNavActive(item, index) ? 'active' : ''}`}
                 >
                   <span className="sidebar-nav-icon">{item.icon}</span>
-                  <span className="sidebar-nav-label">{item.label}</span>
+                  <div className="sidebar-nav-text">
+                    <span className="sidebar-nav-label">{item.label}</span>
+                    {item.description && (
+                      <span className="sidebar-nav-description">{item.description}</span>
+                    )}
+                  </div>
                 </button>
               ))}
             </nav>
