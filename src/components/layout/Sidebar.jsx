@@ -115,29 +115,32 @@ function Sidebar({ mobileOpen, onMobileClose }) {
               <button className="mobile-drawer-close" onClick={onMobileClose}>×</button>
             </div>
 
-            <div className="sidebar-role-badge mobile">
-              <span className="sidebar-role-icon">{roleAvatar}</span>
-              <span className="sidebar-role-label">{roleLabel}</span>
+            <div className="mobile-drawer-body">
+              <div className="sidebar-role-badge mobile">
+                <span className="sidebar-role-icon">{roleAvatar}</span>
+                <span className="sidebar-role-label">{roleLabel}</span>
+              </div>
+
+              <nav className="sidebar-nav mobile">
+                {navItems.map((item, index) => (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavClick(item.path)}
+                    className={`sidebar-nav-item ${isNavActive(item, index) ? 'active' : ''}`}
+                  >
+                    <span className="sidebar-nav-icon">{item.icon}</span>
+                    <div className="sidebar-nav-text">
+                      <span className="sidebar-nav-label">{item.label}</span>
+                      {item.description && (
+                        <span className="sidebar-nav-description">{item.description}</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </nav>
             </div>
 
-            <nav className="sidebar-nav mobile">
-              {navItems.map((item, index) => (
-                <button
-                  key={item.path}
-                  onClick={() => handleNavClick(item.path)}
-                  className={`sidebar-nav-item ${isNavActive(item, index) ? 'active' : ''}`}
-                >
-                  <span className="sidebar-nav-icon">{item.icon}</span>
-                  <div className="sidebar-nav-text">
-                    <span className="sidebar-nav-label">{item.label}</span>
-                    {item.description && (
-                      <span className="sidebar-nav-description">{item.description}</span>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </nav>
-
+            {/* Footer pinned to bottom of drawer */}
             <div className="mobile-drawer-footer">
               <div className="sidebar-user mobile">
                 <div className="sidebar-user-avatar">{roleAvatar}</div>
